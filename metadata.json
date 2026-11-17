@@ -2,5 +2,7 @@
   "name": "MotoVault Skeuomorphic",
   "description": "Tactile skeuomorphic motorcycle management, touring log, and AI companion web app.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

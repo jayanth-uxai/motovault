@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { Gauge, Shield, Wrench, MapPin, PhoneCall, Backpack, Bot, Download, Upload, RefreshCw, Edit3 } from 'lucide-react';
+import { Gauge, Shield, Wrench, MapPin, PhoneCall, Backpack, Bot, Download, Upload, RefreshCw, Edit3, Menu, X } from 'lucide-react';
 
 interface NavbarProps {
   activeTab: string;
@@ -14,6 +14,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenC
   const [newOdoVal, setNewOdoVal] = useState(state.bike.odoCurrent.toString());
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [jsonText, setJsonText] = useState('');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleOdoSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -133,28 +134,84 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, onOpenC
 
       </div>
 
-      {/* Navigation Tabs */}
-      <div className="bg-[#180b07] border-t border-[#372621] px-4 overflow-x-auto">
-        <div className="max-w-7xl mx-auto flex space-x-1 py-2">
-          {navItems.map(item => {
-            const Icon = item.icon;
-            const isActive = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold whitespace-nowrap transition-all ${
-                  isActive
-                    ? 'bg-[#372621] text-[#ffb5a0] border border-[#5b4039] shadow-inner'
-                    : 'text-[#ab8980] hover:text-[#fadcd4] hover:bg-[#271813]'
-                }`}
-              >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-[#ff5722]' : 'text-[#ab8980]'}`} />
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
+      {/* Navigation Tabs (Desktop) & Mobile Hamburger Toggle */}
+      <div className="bg-[#180b07] border-t border-[#372621] px-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between py-2">
+          {/* Desktop Nav Tabs */}
+          <div className="hidden md:flex space-x-1">
+            {navItems.map(item => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold whitespace-nowrap transition-all ${
+                    isActive
+                      ? 'bg-[#372621] text-[#ffb5a0] border border-[#5b4039] shadow-inner'
+                      : 'text-[#ab8980] hover:text-[#fadcd4] hover:bg-[#271813]'
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-[#ff5722]' : 'text-[#ab8980]'}`} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Mobile Current Active Tab & Hamburger Toggle */}
+          <div className="flex md:hidden items-center justify-between w-full py-1">
+            <div className="flex items-center gap-2">
+              {(() => {
+                const activeItem = navItems.find(i => i.id === activeTab);
+                const ActiveIcon = activeItem ? activeItem.icon : Gauge;
+                return (
+                  <>
+                    <ActiveIcon className="w-4 h-4 text-[#ff5722]" />
+                    <span className="text-sm font-bold font-mono text-[#fadcd4] uppercase">
+                      {activeItem?.label || 'Dashboard'}
+                    </span>
+                  </>
+                );
+              })()}
+            </div>
+
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="tactile-btn px-3 py-1.5 rounded-lg flex items-center gap-2 text-xs font-bold text-[#ffb5a0] bg-[#372621] border border-[#5b4039]"
+            >
+              {isMobileMenuOpen ? <X className="w-4 h-4 text-[#ff5722]" /> : <Menu className="w-4 h-4 text-[#ff5722]" />}
+              <span>{isMobileMenuOpen ? 'Close Menu' : 'Modules Menu'}</span>
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Hamburger Dropdown Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden py-3 border-t border-[#372621] space-y-1 animate-in slide-in-from-top duration-200">
+            {navItems.map(item => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setActiveTab(item.id);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all ${
+                    isActive
+                      ? 'bg-[#372621] text-[#ffb5a0] border border-[#5b4039]'
+                      : 'text-[#ab8980] hover:text-[#fadcd4] hover:bg-[#271813]'
+                  }`}
+                >
+                  <Icon className={`w-5 h-5 ${isActive ? 'text-[#ff5722]' : 'text-[#ab8980]'}`} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Import Modal */}
